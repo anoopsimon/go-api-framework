@@ -1,0 +1,4 @@
+=== RUN   TestPingEndpoint
+--- PASS: TestPingEndpoint (0.03s)
+PASS
+ok  	resty-api-test	(cached)

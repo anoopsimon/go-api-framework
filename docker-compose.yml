@@ -12,6 +12,12 @@ services:
     working_dir: /app
     volumes:
       - .:/app
+      - report-data:/report-data
     depends_on:
       - app
-    command: ["go", "test", "-v", "./..."]
+    command: >
+      sh -c "go test -v ./... | tee test-results.out &&
+             go-test-report -input test-results.out -output /report-data/test-report.html"
+
+volumes:
+  report-data:

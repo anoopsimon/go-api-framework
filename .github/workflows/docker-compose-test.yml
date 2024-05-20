@@ -1,4 +1,4 @@
-name: Docker Compose Test
+name: Docker Compose Test and Publish
 
 on:
   push:
@@ -13,20 +13,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Set up Docker Compose
-      run: sudo apt-get update && sudo apt-get install docker-compose
+      - name: Set up Docker Compose
+        run: sudo apt-get update && sudo apt-get install docker-compose
 
-    - name: Build and run Docker Compose
-      run: docker-compose up --build -d
+      - name: Build and run Docker Compose
+        run: docker-compose up --build -d
 
-    - name: Run tests
-      run: docker-compose run test
+      - name: Run tests and generate report
+        run: docker-compose run test
 
-    - name: Shutdown Docker Compose
-      run: docker-compose down
+      - name: Shutdown Docker Compose
+        run: docker-compose down
+
+      - name: Set up GitHub Pages
+        uses: actions/configure-pages@v2
+
+      - name: Upload HTML report to GitHub Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: './report-data'  # Path to the generated HTML report
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2

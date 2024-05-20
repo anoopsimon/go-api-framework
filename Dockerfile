@@ -16,6 +16,9 @@ COPY . .
 # Build the Go app
 RUN go build -o main .
 
+# Install go-test-report
+RUN go install github.com/vakenbolt/go-test-report@latest
+
 # Start a new stage from scratch
 FROM golang:1.18
 
@@ -23,6 +26,7 @@ WORKDIR /app
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
+COPY --from=builder /go/bin/go-test-report /usr/local/bin/go-test-report
 
 # Expose port 9090 to the outside world
 EXPOSE 9090
